@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+	
+        <record id="purchase_order_form_ace_budget" model="ir.ui.view">
+            <field name="name">purchase.order.form.ace.budget</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <field name="product_id" position="after">
+                    <field name="type"   on_change="on_change_type(type)" invisible="1"/>
+                    <field name="budget_code_id" attrs="{'readonly':[('type', '!=', 'budget_code')]}"/>
+                </field>
+	            <xpath expr="//field[@name='order_line']" position="attributes">
+	                <attribute name="context">{'default_type': type}</attribute>
+	            </xpath>
+                
+            </field>
+        </record>
+        	
+    <record model="ir.ui.view" id="purchase_multiple_requisition_form_inherit">
+        <field name="name">purchase.requisition.multiple.form.inherit</field>
+        <field name="model">purchase.requisition.multiple</field>
+        <field name="inherit_id" ref="ng_purchase_requisition.view_purchase_multiple_requisition_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='policy_id']" position="after">
+                   <field name="is_split_po" groups="purchase.group_purchase_user,purchase.group_purchase_manager"/>
+            </xpath>
+            <xpath expr="//page[@string='Suppliers']" position="attributes">
+                <attribute name="attrs">{'invisible': [('is_split_po','=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//tree[@string='Products']/field[@name='product_uom_id']" position="after">
+                 <field name="supplier_ids" groups="purchase.group_purchase_user,purchase.group_purchase_manager"
+                        widget="many2many_tags"
+                        domain="[('supplier', '=', True)]"
+                         />
+            </xpath>
+            <xpath expr="//form[@string='Products']/field[@name='product_uom_id']" position="after">
+                 <field name="supplier_ids" groups="purchase.group_purchase_user,purchase.group_purchase_manager"
+                        widget="many2many_tags"
+                        domain="[('supplier', '=', True)]"
+                         />
+            </xpath>
+            <!--Budget-->
+            <xpath expr="//tree[@string='Products']/field[@name='product_id']" position="before">
+                 <field name="type"  on_change="on_change_type(type)"/>
+            </xpath>
+            <xpath expr="//form[@string='Products']/field[@name='product_id']" position="before">
+                 <field name="type"  on_change="on_change_type(type)"/>
+            </xpath>
+			<xpath expr="//field[@name='partner_ids']" position="attributes">
+                <attribute name="domain">[('supplier','=', True)]</attribute>
+            </xpath>
+            <!--Budget-->
+            <xpath expr="//tree[@string='Products']/field[@name='product_id']" position="after">
+                 <field name="budget_code_id"
+                        attrs="{'invisible':[('type','!=','budget_code')]}"
+                        on_change="onchange_budget_code_id(budget_code_id)"
+                        />
+                 <field name="desc"/>
+            </xpath>
+            <xpath expr="//form[@string='Products']/field[@name='product_id']" position="after">
+                 <field name="budget_code_id" 
+                        attrs="{'invisible':[('type','!=','budget_code')]}"
+                        on_change="onchange_budget_code_id(budget_code_id)"
+                        />
+                 <field name="desc"/>
+            </xpath>
+            <xpath expr="//field[@name='partner_ids']" position="attributes">
+                <attribute name="domain">[('supplier','=', True)]</attribute>
+            </xpath>
+            <xpath expr="//field[@name='line_ids']" position="attributes">
+                <attribute name="context">{'default_type': type}</attribute>
+            </xpath>
+
+            <!--Budget-->
+            <!--  <xpath expr="//tree[@string='Products']/field[@name='product_uom_id']" position="attributes">
+                <attribute name="attrs">{'invisible':[('type','!=','product')]}</attribute>
+            </xpath> -->
+            <!-- <xpath expr="//form[@string='Products']/field[@name='product_uom_id']" position="attributes">
+                <attribute name="attrs">{'invisible':[('type','!=','product')]}</attribute>
+            </xpath> -->
+
+            <!--Budget-->
+            <!-- <xpath expr="//tree[@string='Products']/field[@name='product_id']" position="attributes">
+                <attribute name="attrs">{'invisible':[('type','!=','product')]}</attribute>
+            </xpath>
+            <xpath expr="//form[@string='Products']/field[@name='product_id']" position="attributes">
+                <attribute name="attrs">{'invisible':[('type','!=','product')]}</attribute>
+            </xpath> -->
+
+        </field>
+    </record>
+    
+	</data>
+</openerp>
